@@ -22,6 +22,7 @@ import com.alibaba.nacos.config.server.model.gray.BetaGrayRule;
 import com.alibaba.nacos.config.server.model.gray.TagGrayRule;
 import com.alibaba.nacos.config.server.service.query.model.ConfigQueryChainRequest;
 import com.alibaba.nacos.config.server.utils.RequestUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,8 +32,6 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static com.alibaba.nacos.api.common.Constants.VIPSERVER_TAG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -65,7 +64,7 @@ class DefaultChainRequestExtractorTest {
     public void extractWithAllParametersShouldReturnCorrectConfigQueryChainRequest() {
         when(request.getParameter("dataId")).thenReturn("dataId");
         when(request.getParameter("group")).thenReturn("group");
-        when(request.getParameter("tenant")).thenReturn("tenant");
+        when(request.getParameter("namespaceId")).thenReturn("testNamespaceId");
         when(request.getParameter("tag")).thenReturn("tag");
         when(request.getHeader(VIPSERVER_TAG)).thenReturn("autoTag");
         requestUtilMockedStatic.when(() -> RequestUtil.getRemoteIp(request)).thenReturn("127.0.0.1");
@@ -74,7 +73,7 @@ class DefaultChainRequestExtractorTest {
         
         assertEquals("dataId", result.getDataId());
         assertEquals("group", result.getGroup());
-        assertEquals("tenant", result.getTenant());
+        assertEquals("testNamespaceId", result.getTenant());
         assertEquals("tag", result.getTag());
         assertEquals("127.0.0.1", result.getAppLabels().get(BetaGrayRule.CLIENT_IP_LABEL));
         assertEquals("tag", result.getAppLabels().get(TagGrayRule.VIP_SERVER_TAG_LABEL));
@@ -84,7 +83,7 @@ class DefaultChainRequestExtractorTest {
     public void extractWithEmptyTenantShouldReturnCorrectConfigQueryChainRequest() {
         when(request.getParameter("dataId")).thenReturn("dataId");
         when(request.getParameter("group")).thenReturn("group");
-        when(request.getParameter("tenant")).thenReturn("");
+        when(request.getParameter("namespaceId")).thenReturn("");
         when(request.getParameter("tag")).thenReturn("tag");
         when(request.getHeader(VIPSERVER_TAG)).thenReturn("autoTag");
         requestUtilMockedStatic.when(() -> RequestUtil.getRemoteIp(request)).thenReturn("127.0.0.1");
@@ -103,7 +102,7 @@ class DefaultChainRequestExtractorTest {
     public void extractWithEmptyTagAndAutoTagShouldReturnCorrectConfigQueryChainRequest() {
         when(request.getParameter("dataId")).thenReturn("dataId");
         when(request.getParameter("group")).thenReturn("group");
-        when(request.getParameter("tenant")).thenReturn("tenant");
+        when(request.getParameter("namespaceId")).thenReturn("testNamespaceId");
         when(request.getParameter("tag")).thenReturn("");
         when(request.getHeader(VIPSERVER_TAG)).thenReturn("");
         requestUtilMockedStatic.when(() -> RequestUtil.getRemoteIp(request)).thenReturn("127.0.0.1");
@@ -112,7 +111,7 @@ class DefaultChainRequestExtractorTest {
         
         assertEquals("dataId", result.getDataId());
         assertEquals("group", result.getGroup());
-        assertEquals("tenant", result.getTenant());
+        assertEquals("testNamespaceId", result.getTenant());
         assertEquals("", result.getTag());
         assertEquals("127.0.0.1", result.getAppLabels().get(BetaGrayRule.CLIENT_IP_LABEL));
         assertNull(result.getAppLabels().get(TagGrayRule.VIP_SERVER_TAG_LABEL));
@@ -122,7 +121,7 @@ class DefaultChainRequestExtractorTest {
     public void extractWithAutoTagShouldReturnCorrectConfigQueryChainRequest() {
         when(request.getParameter("dataId")).thenReturn("dataId");
         when(request.getParameter("group")).thenReturn("group");
-        when(request.getParameter("tenant")).thenReturn("tenant");
+        when(request.getParameter("namespaceId")).thenReturn("testNamespaceId");
         when(request.getParameter("tag")).thenReturn("");
         when(request.getHeader(VIPSERVER_TAG)).thenReturn("autoTag");
         when(RequestUtil.getRemoteIp(request)).thenReturn("127.0.0.1");
@@ -131,7 +130,7 @@ class DefaultChainRequestExtractorTest {
         
         assertEquals("dataId", result.getDataId());
         assertEquals("group", result.getGroup());
-        assertEquals("tenant", result.getTenant());
+        assertEquals("testNamespaceId", result.getTenant());
         assertEquals("", result.getTag());
         assertEquals("127.0.0.1", result.getAppLabels().get(BetaGrayRule.CLIENT_IP_LABEL));
         assertEquals("autoTag", result.getAppLabels().get(TagGrayRule.VIP_SERVER_TAG_LABEL));

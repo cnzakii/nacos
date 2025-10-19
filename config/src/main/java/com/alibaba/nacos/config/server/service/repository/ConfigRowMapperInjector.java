@@ -163,6 +163,12 @@ public class ConfigRowMapperInjector {
         RowMapperManager.registerRowMapper(
                 ConfigRowMapperInjector.HISTORY_DETAIL_ROW_MAPPER.getClass().getCanonicalName(),
                 ConfigRowMapperInjector.HISTORY_DETAIL_ROW_MAPPER);
+
+        // CONFIG_INFO_GRAY_WRAPPER_ROW_MAPPER
+
+        RowMapperManager.registerRowMapper(
+                ConfigRowMapperInjector.CONFIG_INFO_GRAY_WRAPPER_ROW_MAPPER.getClass().getCanonicalName(),
+                ConfigRowMapperInjector.CONFIG_INFO_GRAY_WRAPPER_ROW_MAPPER);
     }
     
     public static final class ConfigInfoWrapperRowMapper implements RowMapper<ConfigInfoWrapper> {
@@ -309,9 +315,14 @@ public class ConfigRowMapperInjector {
             info.setGroup(rs.getString("group_id"));
             info.setTenant(rs.getString("tenant_id"));
             info.setGrayName(rs.getString("gray_name"));
-            info.setGrayRule(rs.getString("gray_rule"));
-            info.setAppName(rs.getString("app_name"));
-            
+            try {
+                info.setGrayRule(rs.getString("gray_rule"));
+            } catch (SQLException ignore) {
+            }
+            try {
+                info.setAppName(rs.getString("app_name"));
+            } catch (SQLException ignore) {
+            }
             try {
                 info.setContent(rs.getString("content"));
             } catch (SQLException ignore) {
@@ -350,8 +361,11 @@ public class ConfigRowMapperInjector {
             info.setDataId(rs.getString("data_id"));
             info.setGroup(rs.getString("group_id"));
             info.setTenant(rs.getString("tenant_id"));
-            info.setAppName(rs.getString("app_name"));
             
+            try {
+                info.setAppName(rs.getString("app_name"));
+            } catch (SQLException ignore) {
+            }
             try {
                 info.setContent(rs.getString("content"));
             } catch (SQLException ignore) {
